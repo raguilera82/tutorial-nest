@@ -1,0 +1,29 @@
+version: '3.3'
+
+services:
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    ports:
+      - 3306:3306
+    volumes:
+      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: dba
+      MYSQL_PASSWORD: password
+  
+  app:
+    build:
+      context: .
+    container_name: tutorial-nest
+    links:
+      - mysql
+    depends_on:
+      - mysql
+    ports:
+      - 3002:3000
+    environment:
+      WAIT_HOSTS: mysql:3306
